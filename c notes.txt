@@ -1,0 +1,227 @@
+prefer array indices over array element addresses
+Make structs etc / custom-type array elements have a size that's a power of 2
+
+Rule 1.
+	An array name in an expression (in contrast with a declaration) is treated by the compiler as a pointer to the first element of the array
+Rule2.
+	A subscript is always equivalent to an offset from a pointer
+	int a[10], *p, i=1, x;
+			     x=   a[i];
+		p=a;     x=   p[i];
+		p=a;     x= *(p+i);
+		p=a;     x=  *p++;
+		p=a+i;	 x=  *p;
+Rule 3.
+	An array name in the declaration of a function parameter is treated by
+	the compiler as a pointer to the first element of the array
+		my_function( int * turnip      ) { ... }
+		my_function( int   turnip[]    ) { ... }
+		my_function( int   turnip[200] ) { ... }
+
+		int   my_int;
+		int * my_int_ptr;
+		int my_int_array[10];
+		
+		my_function( &my_int          ); // call by ref of an int
+		my_function(  my_int_ptr      ); // pass a pointer
+		my_function( &my_int_array[i] ); // pass an array slice
+	
+string arrays:
+	 char *  myStrings[8];
+	(char *) myStrings[8];
+
+int array:
+	int    myInts[5][10];
+	int  * myInts[5];
+	int ** myInts;
+	int (* myInts)  [10];
+	int (* myInts[5])[10]; //?
+
+	myInts[i][j]	==	  * ( *(myInts + i ) + j );
+
+// pointer to an array of 20 ints
+	my_function( int (* my_array)[20] ); 
+
+// an array of 20 pointer-to-ints
+	my_function( int  * my_array [20] );
+
+// an array of 20 ints
+	my_function( int  my_array [20] );
+
+
+
+
+static 	Inside a function, retains its value between calls
+		At the function level, visible only in this file 
+extern 	Applied to a function definition, has global scope (and is redundant)
+		Applied to a variable, defined elsewhere
+void 	As the return type of a function, doesn't return a value
+		In a pointer declaration, the type of a generic pointer
+		In a parameter list, takes no parameters
+* The multiplication operator
+		Applied to a pointer, indirection
+		In a declaration, a pointer
+&
+		Bitwise AND operator
+		Address-of operator
+<
+		Less-than operator
+<
+		Left delimiter in #include directive
+()
+		Enclose formal parameters in a function definition
+		Make a function call
+		Provide expression precedence
+		Convert (cast) a value to a different type
+		Define a macro with arguments
+		Make a macro call with arguments
+		Enclose the operand of the sizeof operator when it is a typename 
+
+
+tolower
+isdigit
+atoi
+itoa
+strcat
+
+math.h = doubles
+floats are economic doubles
+
+no unsigned ints unless you must
+cast where unsure
+
+malloc(strlen(str)+1);
+	not
+malloc(strlen(str));
+(strlen (malloc?) doesn't include '\0')
+
+protoypes:
+	void myFunc( int     i,  double  d);
+calls:
+	     myFunc( (int)   i, (double) d);
+	     myFunc( (char)  i, (float)  d);
+	     myFunc( (short) i, (float)  d);
+
+always coerce
+
+bitwise: not double, float
+
+NUL == '\0'
+NULL == false/0 (?)
+NULL == pointer to nowhere
+'\0' == false/0
+
+type of (x op y) == x
+
+[something] * == declaration
+* [something] == declaration, usage
+[something] * * [something] == declaration
+
+int *ip, *iq;
+int x = 1;
+ip = &x;
+iq = ip;
+
+
+function point( int *px, int *py ){
+	...
+}
+
+point( &x, &y );
+
+&x = give me pointer to x
+	(calls have me to turn params into pointers)
+*x = I'm a pointer to x
+	 give me content of x
+	(functions have me for byRef'ing parameters)
+
+
+int x = 1;
+int xTen = 10 * x;
+
+int x = 1;
+int *px;
+int xTen = 10 * *px;
+int *xTen = 10 * *px;
+
+Adding 1 to a pointer always refers to the next element in an array, regardless of type
+
+An array is only an address
+
+int *pa;
+int a[];
+pa = a;
+
+ a[i] == *(a+i)
+&a[i] ==   a+i
+
+pa[i] == *(pa+i)
+
+pa = a;		YES
+pa++;		YES
+a=pa;		NO
+a++			NO
+
+int myFunc( char *){
+	...
+}
+myFunc( "Some string" );
+myFunc( arrayOfString );
+myFunc( pointerToString );
+
+myFunc( char s[] ){  ==  myFunc( char *s ){
+	...			     ==      ...
+}				     ==  }
+
+I've been handed an array/a pointer, whatever I please.
+
+char *myArrayStart = myArray;
+	==
+char *myArrayStart = &myArray[0];
+
+zero is never a valid memory address
+	No other int is equality-comparable with a pointer
+		(pointer <--> int arithmetic is fine)
+	zero == NULL
+
+Pointer arithmetic ONLY WORKS IN THE SAME ARRAY
+(Except... address of first element(?) past the end of an array)
+
+Pointer arithmetic
+------------------
+ints represent element numbers
+
+valid operations:
+	Assign pointers of the same type
+	Assign pointers of different types by casting
+	pointer +/- int
+	int +/- pointer
+	pointer - pointer from same array
+	pointer == pointer from same array
+	pointer = 0/NULL
+	pointer == 0/NULL
+You can't add pointers
+	(or divide/multiply/shift/mask)
+
+
+char myArray[] = "my array"; /* an array */
+	!=
+char *myArray = "my array";  /* a pointer */
+
+if(  s[i] ==  p[i] )
+	==
+if( *s    == *p    )
+
+
+function x(...){
+	...
+	return myStringArray[i]; //myStringArray is static
+} // is returning a pointer to a character string.
+
+
+char myArray[] = { "one", "two", "three" };
+	// array of string
+char *myArray = { "one", "two", "three" };
+	// array of pointer-to-string
+
+p114 - 5.10 Command-line arguments
